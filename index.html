@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>vDC Cost Calculator</title>
 
 <style>
@@ -10,51 +11,70 @@ body {
     margin: 20px;
 }
 
+h2 {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
 input {
-    padding: 5px;
-    width: 100px;
-    margin-bottom: 10px;
+    width: 120px;
+    padding: 6px;
+    font-size: 14px;
 }
 
 button {
-    padding: 8px 16px;
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
 }
 
 table {
+    margin-top: 25px;
     border-collapse: collapse;
-    margin-top: 20px;
-    width: 700px;
+    min-width: 800px;
 }
 
 th, td {
     border: 1px solid #ccc;
-    padding: 8px;
+    padding: 10px;
+    text-align: left;
 }
 
 th {
-    background-color: #f0f0f0;
+    background-color: #f2f2f2;
 }
 
 .total {
     font-weight: bold;
     background-color: #f8f8f8;
 }
-</style>
-</head>
 
+.number {
+    text-align: right;
+}
+</style>
+
+</head>
 <body>
 
 <h2>vDC Cost Calculator</h2>
 
-<label>Virtual CPUs [CORE]</label><br>
-<input type="number" id="cpu" value="4"><br>
+<label for="cpu">Virtual CPUs [CORE]</label>
+<input type="number" id="cpu" value="4" min="0">
 
-<label>Memory [GB]</label><br>
-<input type="number" id="memory" value="16"><br>
+<label for="memory">Memory [GB]</label>
+<input type="number" id="memory" value="16" min="0">
 
-<label>Storage [GB]</label><br>
-<input type="number" id="storage" value="150"><br><br>
+<label for="storage">Storage [GB]</label>
+<input type="number" id="storage" value="150" min="0">
 
+<br>
 <button onclick="calculate()">Calculate</button>
 
 <div id="result"></div>
@@ -71,12 +91,17 @@ function calculate() {
     const memory = Number(document.getElementById("memory").value);
     const storage = Number(document.getElementById("storage").value);
 
-    const basic = 1;
+    const basicUnits = 1;
 
-    const basicDay = basic * 0.5333;
-    const cpuDay = cpu * 0.5333;
-    const memoryDay = memory * 0.1333;
-    const storageDay = storage * 0.0036;
+    const basicPrice = 0.5333;
+    const cpuPrice = 0.5333;
+    const memoryPrice = 0.1333;
+    const storagePrice = 0.0036;
+
+    const basicDay = basicUnits * basicPrice;
+    const cpuDay = cpu * cpuPrice;
+    const memoryDay = memory * memoryPrice;
+    const storageDay = storage * storagePrice;
 
     const totalDay =
         basicDay +
@@ -87,43 +112,49 @@ function calculate() {
     const totalMonth = totalDay * 30;
 
     document.getElementById("result").innerHTML = `
-    <table>
-        <tr>
-            <th>Description</th>
-            <th>Price per day</th>
-            <th>Price per month</th>
-        </tr>
+        <table>
+            <tr>
+                <th>Description</th>
+                <th>Units</th>
+                <th>Price per day</th>
+                <th>Price per month</th>
+            </tr>
 
-        <tr>
-            <td>vDC+Networking basic fee</td>
-            <td>${eur(basicDay)}</td>
-            <td>${eur(basicDay*30)}</td>
-        </tr>
+            <tr>
+                <td>vDC+Networking basic fee</td>
+                <td class="number">1</td>
+                <td class="number">${eur(basicDay)}</td>
+                <td class="number">${eur(basicDay * 30)}</td>
+            </tr>
 
-        <tr>
-            <td>Virtual CPUs [CORE]</td>
-            <td>${eur(cpuDay)}</td>
-            <td>${eur(cpuDay*30)}</td>
-        </tr>
+            <tr>
+                <td>Virtual CPUs [CORE]</td>
+                <td class="number">${cpu}</td>
+                <td class="number">${eur(cpuDay)}</td>
+                <td class="number">${eur(cpuDay * 30)}</td>
+            </tr>
 
-        <tr>
-            <td>Memory [GB]</td>
-            <td>${eur(memoryDay)}</td>
-            <td>${eur(memoryDay*30)}</td>
-        </tr>
+            <tr>
+                <td>Memory [GB]</td>
+                <td class="number">${memory}</td>
+                <td class="number">${eur(memoryDay)}</td>
+                <td class="number">${eur(memoryDay * 30)}</td>
+            </tr>
 
-        <tr>
-            <td>Storage [GB]</td>
-            <td>${eur(storageDay)}</td>
-            <td>${eur(storageDay*30)}</td>
-        </tr>
+            <tr>
+                <td>Storage [GB]</td>
+                <td class="number">${storage}</td>
+                <td class="number">${eur(storageDay)}</td>
+                <td class="number">${eur(storageDay * 30)}</td>
+            </tr>
 
-        <tr class="total">
-            <td>TOTAL SUM</td>
-            <td>${eur(totalDay)}</td>
-            <td>${eur(totalMonth)}</td>
-        </tr>
-    </table>
+            <tr class="total">
+                <td>TOTAL SUM</td>
+                <td></td>
+                <td class="number">${eur(totalDay)}</td>
+                <td class="number">${eur(totalMonth)}</td>
+            </tr>
+        </table>
     `;
 }
 
