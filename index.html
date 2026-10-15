@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>Laskuri</h1>
+
+<input type="number" id="a">
+
+<button onclick="laske()">
+Laske
+</button>
+
+<p>Tulos: <span id="tulos">0</span></p>
+
+<script>
+function laske() {
+    let a = Number(document.getElementById("a").value);
+    document.getElementById("tulos").innerText = a * 10;
+}
+</script>
+
+</body>
+</html>
