@@ -21,10 +21,19 @@ label {
     margin-bottom: 5px;
 }
 
-input {
+input[type="number"] {
     width: 120px;
     padding: 6px;
     font-size: 14px;
+}
+
+.radio-group {
+    margin-top: 20px;
+}
+
+.radio-group label {
+    display: inline;
+    margin-right: 20px;
 }
 
 button {
@@ -37,26 +46,25 @@ button {
 table {
     margin-top: 25px;
     border-collapse: collapse;
-    min-width: 800px;
+    min-width: 850px;
 }
 
 th, td {
     border: 1px solid #ccc;
     padding: 10px;
-    text-align: left;
 }
 
 th {
     background-color: #f2f2f2;
 }
 
+.number {
+    text-align: right;
+}
+
 .total {
     font-weight: bold;
     background-color: #f8f8f8;
-}
-
-.number {
-    text-align: right;
 }
 </style>
 
@@ -74,7 +82,16 @@ th {
 <label for="storage">Storage [GB]</label>
 <input type="number" id="storage" value="150" min="0">
 
-<br>
+<div class="radio-group">
+    <strong>VM Power State</strong><br><br>
+
+    <input type="radio" id="powerOn" name="powerState" checked>
+    <label for="powerOn">VM Power ON</label>
+
+    <input type="radio" id="powerOff" name="powerState">
+    <label for="powerOff">VM Power OFF</label>
+</div>
+
 <button onclick="calculate()">Calculate</button>
 
 <div id="result"></div>
@@ -87,9 +104,19 @@ function eur(value) {
 
 function calculate() {
 
-    const cpu = Number(document.getElementById("cpu").value);
-    const memory = Number(document.getElementById("memory").value);
+    const enteredCpu = Number(document.getElementById("cpu").value);
+    const enteredMemory = Number(document.getElementById("memory").value);
     const storage = Number(document.getElementById("storage").value);
+
+    const powerOff = document.getElementById("powerOff").checked;
+
+    let cpu = enteredCpu;
+    let memory = enteredMemory;
+
+    if (powerOff) {
+        cpu = 0;
+        memory = 0;
+    }
 
     const basicUnits = 1;
 
@@ -129,14 +156,14 @@ function calculate() {
 
             <tr>
                 <td>Virtual CPUs [CORE]</td>
-                <td class="number">${cpu}</td>
+                <td class="number">${powerOff ? 0 : enteredCpu}</td>
                 <td class="number">${eur(cpuDay)}</td>
                 <td class="number">${eur(cpuDay * 30)}</td>
             </tr>
 
             <tr>
                 <td>Memory [GB]</td>
-                <td class="number">${memory}</td>
+                <td class="number">${powerOff ? 0 : enteredMemory}</td>
                 <td class="number">${eur(memoryDay)}</td>
                 <td class="number">${eur(memoryDay * 30)}</td>
             </tr>
@@ -164,3 +191,4 @@ calculate();
 
 </body>
 </html>
+``
