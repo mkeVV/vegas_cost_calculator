@@ -1,22 +1,134 @@
 <!DOCTYPE html>
 <html>
+<head>
+<meta charset="utf-8">
+<title>vDC Cost Calculator</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+input {
+    padding: 5px;
+    width: 100px;
+    margin-bottom: 10px;
+}
+
+button {
+    padding: 8px 16px;
+}
+
+table {
+    border-collapse: collapse;
+    margin-top: 20px;
+    width: 700px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+}
+
+th {
+    background-color: #f0f0f0;
+}
+
+.total {
+    font-weight: bold;
+    background-color: #f8f8f8;
+}
+</style>
+</head>
+
 <body>
 
-<h1>Laskuri</h1>
+<h2>vDC Cost Calculator</h2>
 
-<input type="number" id="a">
+<label>Virtual CPUs [CORE]</label><br>
+<input type="number" id="cpu" value="4"><br>
 
-<button onclick="laske()">
-Laske
-</button>
+<label>Memory [GB]</label><br>
+<input type="number" id="memory" value="16"><br>
 
-<p>Tulos: <span id="tulos">0</span></p>
+<label>Storage [GB]</label><br>
+<input type="number" id="storage" value="150"><br><br>
+
+<button onclick="calculate()">Calculate</button>
+
+<div id="result"></div>
 
 <script>
-function laske() {
-    let a = Number(document.getElementById("a").value);
-    document.getElementById("tulos").innerText = a * 10;
+
+function eur(value) {
+    return value.toFixed(2).replace('.', ',') + '€';
 }
+
+function calculate() {
+
+    const cpu = Number(document.getElementById("cpu").value);
+    const memory = Number(document.getElementById("memory").value);
+    const storage = Number(document.getElementById("storage").value);
+
+    const basic = 1;
+
+    const basicDay = basic * 0.5333;
+    const cpuDay = cpu * 0.5333;
+    const memoryDay = memory * 0.1333;
+    const storageDay = storage * 0.0036;
+
+    const totalDay =
+        basicDay +
+        cpuDay +
+        memoryDay +
+        storageDay;
+
+    const totalMonth = totalDay * 30;
+
+    document.getElementById("result").innerHTML = `
+    <table>
+        <tr>
+            <th>Description</th>
+            <th>Price per day</th>
+            <th>Price per month</th>
+        </tr>
+
+        <tr>
+            <td>vDC+Networking basic fee</td>
+            <td>${eur(basicDay)}</td>
+            <td>${eur(basicDay*30)}</td>
+        </tr>
+
+        <tr>
+            <td>Virtual CPUs [CORE]</td>
+            <td>${eur(cpuDay)}</td>
+            <td>${eur(cpuDay*30)}</td>
+        </tr>
+
+        <tr>
+            <td>Memory [GB]</td>
+            <td>${eur(memoryDay)}</td>
+            <td>${eur(memoryDay*30)}</td>
+        </tr>
+
+        <tr>
+            <td>Storage [GB]</td>
+            <td>${eur(storageDay)}</td>
+            <td>${eur(storageDay*30)}</td>
+        </tr>
+
+        <tr class="total">
+            <td>TOTAL SUM</td>
+            <td>${eur(totalDay)}</td>
+            <td>${eur(totalMonth)}</td>
+        </tr>
+    </table>
+    `;
+}
+
+calculate();
+
 </script>
 
 </body>
