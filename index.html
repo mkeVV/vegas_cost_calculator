@@ -21,7 +21,8 @@ label {
     margin-bottom: 5px;
 }
 
-input[type="number"] {
+input[type="number"],
+select {
     width: 120px;
     padding: 6px;
     font-size: 14px;
@@ -73,6 +74,13 @@ th {
 
 <h2>vDC Cost Calculator</h2>
 
+<label for="customerType">Customer Type</label>
+<select id="customerType">
+    <option value="automation">Automation</option>
+    <option value="other">Other Unit</option>
+    <option value="customer">Customer/VAR</option>
+</select>
+
 <label for="cpu">Virtual CPUs [CORE]</label>
 <input type="number" id="cpu" value="4" min="0">
 
@@ -99,7 +107,7 @@ th {
 <script>
 
 function eur(value) {
-    return value.toFixed(2).replace('.', ',') + '€';
+    return value.toFixed(2).replace('.', ',') + ' €';
 }
 
 function calculate() {
@@ -108,7 +116,16 @@ function calculate() {
     const enteredMemory = Number(document.getElementById("memory").value);
     const storage = Number(document.getElementById("storage").value);
 
-    const powerOff = document.getElementById("powerOff").checked;
+    const customerType =
+        document.getElementById("customerType").value;
+
+    const customerTypeText =
+        document.getElementById("customerType")
+        .options[document.getElementById("customerType").selectedIndex]
+        .text;
+
+    const powerOff =
+        document.getElementById("powerOff").checked;
 
     let cpu = enteredCpu;
     let memory = enteredMemory;
@@ -120,10 +137,34 @@ function calculate() {
 
     const basicUnits = 1;
 
-    const basicPrice = 0.5333;
-    const cpuPrice = 0.5333;
-    const memoryPrice = 0.1333;
-    const storagePrice = 0.0036;
+    let basicPrice;
+    let cpuPrice;
+    let memoryPrice;
+    let storagePrice;
+
+    switch (customerType) {
+
+        case "automation":
+            basicPrice = 0.5333;
+            cpuPrice = 0.5333;
+            memoryPrice = 0.1333;
+            storagePrice = 0.0036;
+            break;
+
+        case "other":
+            basicPrice = 0.6933;
+            cpuPrice = 0.6933;
+            memoryPrice = 0.1733;
+            storagePrice = 0.0046;
+            break;
+
+        case "customer":
+            basicPrice = 1.0667;
+            cpuPrice = 1.0667;
+            memoryPrice = 0.2667;
+            storagePrice = 0.0071;
+            break;
+    }
 
     const basicDay = basicUnits * basicPrice;
     const cpuDay = cpu * cpuPrice;
@@ -145,6 +186,13 @@ function calculate() {
                 <th>Units</th>
                 <th>Price per day</th>
                 <th>Price per month</th>
+            </tr>
+
+            <tr>
+                <td>Customer Type</td>
+                <td>${customerTypeText}</td>
+                <td></td>
+                <td></td>
             </tr>
 
             <tr>
